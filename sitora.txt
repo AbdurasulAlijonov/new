@@ -1,0 +1,72 @@
+uzgaruvchi = ["int","double","float","bool","string","char"]
+massiv = list()
+with open("text","r")as fayl:
+    for i in fayl:
+        for uzg in uzgaruvchi:
+            if uzg in i:
+                j = i.split()
+                for l in j:
+                    l = l.split(";")
+                    for k in l:
+                        k = k.split(",")
+                        massiv.append(k)
+for uzg in uzgaruvchi:
+    print(uzg, "turidagi o\'zgaruvchilar:")
+    for i in range(len(massiv)):
+            if massiv[i][0] == uzg:
+                for j in massiv[i+1]:
+                    print(j,end = "\n")
+
+
+
+
+
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace dioganalqatlam
+{
+    class Program
+    {
+        static void Main(string [] args)
+        {
+            bool rost;
+            char a,w;
+            string satr,matn = "dfdd";
+            bool s,d;
+            int n,pastga,yonga,l = 1;
+            n = Convert.ToInt32(Console.ReadLine());
+            int[,] a = new int[2 * n, 2 * n];
+            a[0, 0] = 1;
+            for(int i=2; i < n*n+1; l++)
+            {
+                a[l, 0] = i;
+                i++;
+                for (pastga = 1, yonga = l - 1; yonga >= 0; pastga++, yonga--, i++, l = pastga)
+                    a[yonga, pastga] = i;
+                a[0, l] = i;
+                i++;
+                for (yonga = 1, pastga = l - 1; pastga >= 0; yonga++, i++, pastga--)
+                    a[yonga, pastga] = i;
+            }
+            for(int i=0; i < 2*n; i++)
+            {
+                for(int j=0; j < 2*n; j++)
+                {
+                    if (a[i, j] != 0 && a[i, j] <= n * n)
+                        Console.Write(a[i, j] + "\t");
+                }
+                Console.WriteLine();
+            }
+            Console.ReadKey();
+        }
+    }
+}
+
