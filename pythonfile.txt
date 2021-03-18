@@ -1,72 +1,553 @@
-uzgaruvchi = ["int","double","float","bool","string","char"]
-massiv = list()
-with open("text","r")as fayl:
-    for i in fayl:
-        for uzg in uzgaruvchi:
-            if uzg in i:
-                j = i.split()
-                for l in j:
-                    l = l.split(";")
-                    for k in l:
-                        k = k.split(",")
-                        massiv.append(k)
-for uzg in uzgaruvchi:
-    print(uzg, "turidagi o\'zgaruvchilar:")
-    for i in range(len(massiv)):
-            if massiv[i][0] == uzg:
-                for j in massiv[i+1]:
-                    print(j,end = "\n")
+from tkinter import *
+from tkinter import ttk,messagebox
+import csv
+
+class BoshTizim:
+
+
+    foydalanuvchiOyna = None
+    boshOyna = None
+    mutaxasisOyna = None
+    aktivmutaxasis = False
+    aktivfoydalanuvchi = False
+    attribut_listbox = None
+    qiyamt_listbox = None
 
 
 
+    def __init__(self):
+        self.attributlar = []
+        self.qiymatlar = []
+        self.maqsadlar = []
+        self.qoidalar = []
+        self.yOynaAtts = []
+        self.fNatijaQiymatlar = []
+        self.fNatijaAttributlar = []
+
+        self.fattributlar = list()
+        self.fqiymatlar = list()
+        self.qiymatlarDict = dict()
+        self.maqsadlarDict = dict()
+
+        self.openAttributFile()
+        self.openQiymatFile()
+        self.openFile()
+        self.TizimgaKirish()
+
+    def openFile(self):
+        try:
+            filename = 'kasallik.csv'
+            with open(filename, 'r', newline="") as fayl:
+                reader = csv.DictReader(fayl)
+                for kasal in reader:
+                    if  kasal['maqsad'] != 'maqsad':
+                        maqsad = eval(kasal['maqsad'])
+                        #print(maqsad)
+                        qiymat = eval(kasal['qiymatlar'])
+                        for m in maqsad.keys():
+                            self.maqsadlar.append(m)
+                        for a in qiymat.keys():
+                            self.fattributlar.append(a)
+                        for v in qiymat.values():
+                            self.fqiymatlar.append(v)
+        except ImportError:
+            pass
+            #messagebox.showinfo('Xato!','Fayl topilmadi...')
+
+    def openAttributFile(self):
+        try:
+            filename = 'attribut.txt'
+            with open(filename, 'r') as fayl:
+                for att in fayl.readlines():
+                    att,a = att.split('\n')
+                    self.attributlar.append(att)
+
+        except ImportError:
+            try:
+                filename = 'attribut.txt'
+                with open(filename, 'w') as fayl:
+                    for att in fayl.readlines():
+                        self.attributlar.append(att)
+            except ImportError:
+                pass
+    def openQiymatFile(self):
+        try:
+            filename = 'qiymat.txt'
+            with open(filename, 'r') as fayl:
+                for qiymat in fayl.readlines():
+                    qiymat,q = qiymat.split('\n')
+                    self.qiymatlar.append(qiymat)
+
+        except ImportError:
+            try:
+                filename = 'qiymat.txt'
+                with open(filename, 'w') as fayl:
+                    for qiymat in fayl.readlines():
+                        self.qiymatlar.append(qiymat)
+            except ImportError:
+                pass
+    def openQoidaFile(self):
+        self.qoidalar = []
+        try:
+            filename = 'qoidalar.txt'
+            with open(filename, 'r') as fayl:
+                for qiymat in fayl.readlines():
+                    self.qoidalar.append(qiymat)
+        except ImportError:
+            try:
+                filename = 'qoidalar.txt'
+                with open(filename, 'w') as fayl:
+                    pass
+            except ImportError:
+                pass
+                #messagebox.showinfo('Info','Qoidalar.txt topilmadi..')
+
+    def TizimgaKirish(self):
+        self.boshOyna = Tk()
+        self.boshOyna.geometry('300x300')
+        self.boshOyna.title('Tizimga kirish')
+        self.boshOyna.config(bg='lightblue')
+
+        btnfoydalanuvchi = Button(self.boshOyna, text='Foydalanuvchi', font=('arial', 16, 'bold'),
+                                  bd=5, command=lambda: self.Foydalanuvchi())
+        btnfoydalanuvchi.place(relx=0.5, rely=0.4, anchor=CENTER)
+
+        btnmutaxasis = Button(self.boshOyna,text='    Mutaxasis    ', font=('arial',16,'bold'),
+                              bd=5, command = lambda : self.Mutaxxasis())
+        btnmutaxasis.place(relx = 0.5, rely = 0.6, anchor = CENTER)
 
 
 
+        self.boshOyna.mainloop()
 
 
+    def Foydalanuvchi(self):
+        self.aktivfoydalanuvchi = True
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+        self.boshOyna.destroy()
+        self.foydalanuvchiOyna = Tk()
+        self.foydalanuvchiOyna.title('Foydalanuvchi oynasi')
+        self.foydalanuvchiOyna.geometry('700x350')
 
-namespace dioganalqatlam
-{
-    class Program
-    {
-        static void Main(string [] args)
-        {
-            bool rost;
-            char a,w;
-            string satr,matn = "dfdd";
-            bool s,d;
-            int n,pastga,yonga,l = 1;
-            n = Convert.ToInt32(Console.ReadLine());
-            int[,] a = new int[2 * n, 2 * n];
-            a[0, 0] = 1;
-            for(int i=2; i < n*n+1; l++)
-            {
-                a[l, 0] = i;
-                i++;
-                for (pastga = 1, yonga = l - 1; yonga >= 0; pastga++, yonga--, i++, l = pastga)
-                    a[yonga, pastga] = i;
-                a[0, l] = i;
-                i++;
-                for (yonga = 1, pastga = l - 1; pastga >= 0; yonga++, i++, pastga--)
-                    a[yonga, pastga] = i;
-            }
-            for(int i=0; i < 2*n; i++)
-            {
-                for(int j=0; j < 2*n; j++)
-                {
-                    if (a[i, j] != 0 && a[i, j] <= n * n)
-                        Console.Write(a[i, j] + "\t");
-                }
-                Console.WriteLine();
-            }
-            Console.ReadKey();
-        }
-    }
-}
+        self.fatt1 = StringVar()
+        self.fqiymat1 = StringVar()
+        self.fattMaqsad = StringVar()
+        self.fqiymatMaqsad = StringVar()
+        self.yOynaAtt = StringVar()
+        self.yOynaQiymat = StringVar()
 
+        self.fkasallikqiymati = StringVar()
+
+        ######################### Qoida Frame ##########################
+        qoida_frame = LabelFrame(self.foydalanuvchiOyna, text='Faktlar', bd=5, font=('arial', 16))
+        qoida_frame.grid(row=1, column=0, pady=5, columnspan=2, padx=20)
+
+        ############### att1 va qiymat1 ####################################
+        self.lblatt1 = Label(qoida_frame, font=('arial', 12, 'bold'), text='Attribut:', padx=6, pady=4,
+                             bg="Ghost White")
+        self.lblatt1.grid(row=0, column=0, sticky=W)
+        self.comfatt1 = ttk.Combobox(qoida_frame, width=18, font=("Times New Roman", 16),
+                                    textvariable=self.fatt1, state='readonly')
+        self.comfatt1['values'] = self.fattributlar
+        self.comfatt1.grid(row=0, column=1, pady=5)
+        self.lblv1 = Label(qoida_frame, font=('arial', 16, 'bold'), text=' = ')
+        self.lblv1.grid(row=0, column=2, sticky=W, pady=5)
+        self.comfqiymat1 = ttk.Combobox(qoida_frame, width=18, state='readonly', textvariable=self.fqiymat1,
+                                       font=("Times New Roman", 16))
+        self.comfqiymat1['values'] = self.fqiymatlar
+        self.comfqiymat1.grid(row=0, column=3, pady=5)
+        Button(qoida_frame, text='Qo\'shish', font=('arial', 12,), bd=5,
+               command=lambda: self.Tekshirish()).grid(row=0, column=4, sticky=W,padx=5)
+        ########################## Listbox #########################################
+        self.flistbox_matn = Listbox(qoida_frame, font=('arial', 12, 'bold'), height=8, width=70)
+        self.flistbox_matn.grid(row=2, column=0, columnspan=5, pady=5)
+        ##################################################################################
+        ############### Uholda attribut va qiymat ##################################################
+        self.lblUholda = Label(qoida_frame, font=('arial', 12, 'bold'), text='Maqsad:', padx=6, pady=4,
+                               bg="Ghost White")
+        self.lblUholda.grid(row=3, column=0, sticky=W)
+        self.comfattMaqsad = ttk.Combobox(qoida_frame, width=18, font=("Times New Roman", 16),
+                                         textvariable=self.fattMaqsad, state='disabled')
+        self.comfattMaqsad['values'] = self.maqsadlar
+        self.comfattMaqsad.grid(row=3, column=1, pady=5)
+        self.lblva1 = Label(qoida_frame, font=('arial', 16, 'bold'), text=' = ')
+        self.lblva1.grid(row=3, column=2, sticky=W, pady=5)
+        self.txtxulosa = Entry(qoida_frame, font=('arial', 16),state='readonly', width=20, bd=5)
+        self.txtxulosa.grid(row=3, column=3, pady=5)
+        self.btnXulosa = Button(qoida_frame, text=' Xulosa ', font=('arial', 12,), bd=5,state='disabled',
+                                 command=lambda: self.Xulosa())
+        self.btnXulosa.grid(row=3, column=4, sticky=W, padx=10)
+        btnorqaga = Button(self.foydalanuvchiOyna, text='Orqaga', font=('arial', 16, 'bold'),
+                           bd=5, command=lambda: self.Orqaga())
+        btnorqaga.place(relx=0, rely=0.863)
+        btntozalash = Button(self.foydalanuvchiOyna, text='Tozalash', font=('arial', 16, 'bold'),
+                           bd=5, command=lambda: self.Tozalash())
+        btntozalash.place(relx=0.427, rely=0.863)
+
+        btnchiqish = Button(self.foydalanuvchiOyna, text='Chiqish', font=('arial', 16, 'bold'),
+                            bd=5, command=lambda: self.Chiqish())
+        btnchiqish.place(relx=0.855, rely=0.863)
+
+        self.foydalanuvchiOyna.mainloop()
+
+    def Tozalash(self):
+        self.comfatt1.set('')
+        self.comfqiymat1.set('')
+        self.comfattMaqsad.set('')
+        self.flistbox_matn.delete(0,END)
+        self.txtxulosa.delete(0,END)
+        self.fNatijaAttributlar = []
+        self.fNatijaQiymatlar = []
+        self.yOynaAtts = []
+        self.btnXulosa.config(state=NORMAL)
+        self.comfattMaqsad.config(state='readonly')
+
+    def Mavjud(self,att, qyt, dct):
+        print(att)
+        print(qyt)
+        print(dct)
+        newdct = {}
+        k = 0
+        natija = ''
+        for i in range(len(att)):
+            newdct[att[i]] = qyt[i]
+        for itm in newdct.items():
+            if itm in dct.items():
+                k += 1
+        if k == len(dct.items()):
+            natija = '1'
+        elif k != len(att) and k != 0:
+            natija = '0'
+        elif k == 0:
+            natija = '-1'
+        else:
+            for itm in dct.items():
+                if not itm in newdct.items():
+                    natija = itm[0]
+        return natija
+
+    def Tekshirish(self):
+        att = self.comfatt1.get()
+        qiymat = self.comfqiymat1.get()
+        if len(att) != 0 and len(qiymat) != 0:
+            self.flistbox_matn.insert(END, '{att} = {qiymat}'.format(att=att, qiymat=qiymat))
+            self.fNatijaAttributlar.append(att)
+            self.fNatijaQiymatlar.append(qiymat)
+            self.comfatt1.set('')
+            self.comfqiymat1.set('')
+            self.btnXulosa.config(state=NORMAL)
+            self.comfattMaqsad.config(state='readonly')
+        else:
+            messagebox.showinfo('Xatolik', 'ATTRIBUT va uning QIYMATI ni kiriting')
+
+    def Xulosa(self):
+        #self.NewWindow()
+        xulosa = self.fattMaqsad.get()
+        if xulosa != '':
+            try:
+                filename = 'kasallik.csv'
+                with open(filename, 'r', newline="") as fayl:
+                    reader = csv.DictReader(fayl)
+                    for kasal in reader:
+                        if  kasal['maqsad'] != 'maqsad':
+                            maqsad = eval(kasal['maqsad'])
+                            qiymat = eval(kasal['qiymatlar'])
+                            try:
+                                natija = self.Mavjud(self.fNatijaAttributlar,self.fNatijaQiymatlar,qiymat)
+                                if natija == '1':
+                                    self.txtxulosa.config(state=NORMAL)
+                                    self.txtxulosa.insert(END,maqsad[xulosa])
+                                    self.fqiymatlar = []
+                                    self.fattributlar = []
+                                elif natija == '-1':
+                                    pass
+                                elif natija == '0':
+                                    messagebox.showinfo('Info','Siz bergan ma\'lumotlar asosida\nhech qanday natija topilmadi')
+                                    self.Tozalash()
+                                else:
+                                    #self.yOynacomfatt.current(natija)
+                                    self.NewWindow(natija)
+                            except:
+                                pass
+                               # messagebox.showinfo('info','Natija topilmadi')
+                            # for a in qiymat.keys():
+                            #     self.fattributlar.append(a)
+                            # for m in maqsad.keys():
+                            #     self.maqsadlar.append(m)
+                            # for v in qiymat.values():
+                            #     self.fqiymatlar.append(v)
+            except:
+                messagebox.showinfo('Xato!','Fayl topilmadi...')
+        else:
+            messagebox.showinfo('Xato!', 'Maqsadni tanlang...')
+
+    def AttributQushish(self):
+        att = self.att.get()
+        if len(att) != 0:
+            try:
+                filename = 'attribut.txt'
+                if att not in self.attributlar:
+                    with open(filename, 'a') as fayl:
+                        fayl.write(att + "\n")
+                    self.attribut_listboxM.insert(END,att)
+                    self.txtatt.delete(0,END)
+                    self.attributlar.append(att)
+                    self.comatt1['values'] = self.attributlar
+                    self.comattUholda['values'] = self.attributlar
+            except:
+                messagebox.showinfo('Xatolik!', 'Fayl topilmadi...')
+
+    def QiymatQushish(self):
+        qiymat = self.txtqiymat.get()
+        if len(qiymat) != 0:
+            try:
+                filename = 'qiymat.txt'
+                if qiymat not in self.qiymatlar:
+                    with open(filename, 'a') as fayl:
+                        fayl.write(qiymat + "\n")
+                    self.qiymat_listboxM.insert(END,qiymat)
+                    self.txtqiymat.delete(0,END)
+                    self.qiymatlar.append(qiymat)
+                    self.comqiymat1['values'] = self.qiymatlar
+                    self.comqiymatUholda['values'] = self.qiymatlar
+            except:
+                messagebox.showinfo('Xatolik!', 'Fayl topilmadi...')
+
+
+    def Mutaxxasis(self):
+        self.boshOyna.destroy()
+        self.openQoidaFile()
+        self.mutaxasisOyna = Tk()
+        self.mutaxasisOyna.title('Mutaxxasis oynasi')
+        self.mutaxasisOyna.geometry('1250x700')
+        self.mutaxasisOyna.config()
+        self.aktivmutaxasis = True
+
+        self.att = StringVar()
+        self.qiymat = StringVar()
+        self.attUholda = StringVar()
+        self.qiymatUholda = StringVar()
+        self.att1 = StringVar()
+        self.qiymat1 = StringVar()
+
+        self.kasallikqiymati = StringVar()
+
+        qism1 = LabelFrame(self.mutaxasisOyna)
+        qism1.grid(column=0,row=0)
+        ######################### Attribut Frame ##########################
+        attribut_frame = LabelFrame(qism1,text='Attributlar', font=('arial', 16),bd=5)
+        attribut_frame.grid(row=0,column=0,padx=10)
+
+        self.txtatt = Entry(attribut_frame, font=('arial', 16), textvariable=self.att, width=20,bd=5)
+        self.txtatt.grid(row=0, column=0,padx=5,pady=5)
+        Button(attribut_frame, text='Attribut qo\'shish',font=('arial', 12,),bd=5,
+                                  command=lambda: self.AttributQushish()).grid(row=1, column=0, sticky=W, pady=5,padx=70)
+        attributFrame = Frame(attribut_frame)
+        scrollbarAtt = Scrollbar(attributFrame)
+        scrollbarAtt.pack(side=RIGHT, fill=Y)
+
+        self.attribut_listboxM = Listbox(attributFrame, font=('arial', 12),yscrollcommand=scrollbarAtt.set, width=30)
+
+        for language in self.attributlar:
+            self.attribut_listboxM.insert(END, language)
+
+            self.attribut_listboxM.pack(side=LEFT)
+        scrollbarAtt.config(command=self.attribut_listboxM.yview)
+        attributFrame.grid(row=2, column=0,padx=5,pady=5)
+        #########################################################################################
+
+        ######################### Qiymat Frame ##########################
+        qiymat_frame = LabelFrame(qism1, text='Qiymatlar', bd=5,font=('arial', 16))
+        qiymat_frame.grid(row=0,column=1)
+
+        self.txtqiymat = Entry(qiymat_frame, font=('arial', 16), textvariable=self.qiymat, width=20, bd=5)
+        self.txtqiymat.grid(row=0, column=0, padx=5, pady=5)
+        Button(qiymat_frame, text='Qiymat qo\'shish', font=('arial', 12,), bd=5,
+               command=lambda: self.QiymatQushish()).grid(row=1, column=0, sticky=W, pady=5, padx=70)
+        qiymatFrame = Frame(qiymat_frame)
+        scrollbarQiymat = Scrollbar(qiymatFrame)
+        scrollbarQiymat.pack(side=RIGHT, fill=Y)
+
+        self.qiymat_listboxM = Listbox(qiymatFrame,font=('arial', 12), yscrollcommand=scrollbarQiymat.set, width=30)
+
+        for language in self.qiymatlar:
+            self.qiymat_listboxM.insert(END, language)
+
+            self.qiymat_listboxM.pack(side=LEFT)
+        scrollbarQiymat.config(command=self.qiymat_listboxM.yview)
+        qiymatFrame.grid(row=2, column=0, padx=5, pady=5)
+        #########################################################################################
+
+        ######################### Qoida Frame ##########################
+        qoida_frame = LabelFrame(qism1, text='Qoida yaratish', bd=5, font=('arial', 16))
+        qoida_frame.grid(row=1, column=0, columnspan=2,padx=10)
+
+        ############### att1 va qiymat1 ####################################
+        self.lblatt1= Label(qoida_frame, font=('arial', 12, 'bold'), text='Attribut:', padx=6, pady=4, bg="Ghost White")
+        self.lblatt1.grid(row=0, column=0, sticky=W)
+        self.comatt1 = ttk.Combobox(qoida_frame, width=18, font=("Times New Roman", 16),
+                                    textvariable=self.att1, state='readonly')
+        self.comatt1['values'] = self.attributlar
+        self.comatt1.grid(row=0, column=1,pady=5)
+        self.lblv1 = Label(qoida_frame, font=('arial', 16, 'bold'), text=' = ')
+        self.lblv1.grid(row=0, column=2, sticky=W,pady=5)
+        self.comqiymat1 = ttk.Combobox(qoida_frame, width=18, state='readonly',textvariable=self.qiymat1, font=("Times New Roman", 16))
+        self.comqiymat1['values'] = self.qiymatlar
+        self.comqiymat1.grid(row=0, column=3,pady=5)
+        Button(qoida_frame, text='Qo\'shish', font=('arial', 12,), bd=5,
+               command=lambda: self.Tasdiqlash()).grid(row=0, column=4, sticky=W,padx=10)
+        ########################## Listbox #########################################
+        self.listbox_matn = Listbox(qoida_frame,font=('arial', 12, 'bold'),height=8,width=70)
+        self.listbox_matn.grid(row=2,column=0,columnspan=5,pady=5)
+        ##################################################################################
+        ############### Uholda attribut va qiymat ##################################################
+        self.lblUholda = Label(qoida_frame, font=('arial', 12, 'bold'), text='U holda:', padx=6, pady=4,
+                             bg="Ghost White")
+        self.lblUholda.grid(row=3, column=0, sticky=W)
+        self.comattUholda = ttk.Combobox(qoida_frame, width=18, font=("Times New Roman", 16),
+                                    textvariable=self.attUholda, state='readonly')
+        self.comattUholda['values'] = self.attributlar
+        self.comattUholda.grid(row=3, column=1, pady=5)
+        self.lblva1 = Label(qoida_frame, font=('arial', 16, 'bold'), text=' = ')
+        self.lblva1.grid(row=3, column=2, sticky=W, pady=5)
+        self.comqiymatUholda = ttk.Combobox(qoida_frame, width=18, state='readonly', textvariable=self.qiymatUholda,
+                                       font=("Times New Roman", 16))
+        self.comqiymatUholda['values'] = self.qiymatlar
+        self.comqiymatUholda.bind("<<ComboboxSelected>>", self.MaqsadUholda)
+        self.comqiymatUholda.grid(row=3, column=3, pady=5)
+        self.btnsaqlash = Button(qoida_frame, text='Saqlash', font=('arial', 12,), bd=5,
+               command=lambda: self.Saqlash()).grid(row=3, column=4, sticky=W,padx=10)
+        ##################################################################################
+        ###################### Shakllangan qoidalar ######################################
+        qism2 = LabelFrame(self.mutaxasisOyna)
+        qism2.grid(row=0,column=1)
+        tayyorQoida_frame = LabelFrame(qism2, text='Shakllangan qoidalar', font=('arial', 16), bd=5)
+        tayyorQoida_frame.grid(row=0, column=2, pady=5)
+        qoidaFrame = Frame(tayyorQoida_frame)
+        scrollbarQoida = Scrollbar(qoidaFrame)
+        scrollbarQoida.pack(side=RIGHT, fill=Y)
+        self.listbox_qoidalar = Listbox(tayyorQoida_frame,font=('arial', 12, 'bold'),height=28,width=60)
+        for q in self.qoidalar:
+            self.listbox_qoidalar.insert(END,q)
+        self.listbox_qoidalar.grid(row=0,column=0,rowspan=2)
+        scrollbarQoida.config(command=self.listbox_qoidalar.yview)
+        ##################################################################################
+        ########################### Orqaga va Chiqish buttonlari ###########################
+        btnorqaga = Button(self.mutaxasisOyna,text='Orqaga', font=('arial',16,'bold'),
+                              bd=5, command = lambda : self.Orqaga())
+        btnorqaga.place(relx = 0, rely = 0.934)
+
+        btnchiqish = Button(self.mutaxasisOyna, text='Chiqish', font=('arial', 16, 'bold'),
+                            bd=5, command=lambda: self.Chiqish())
+        btnchiqish.place(relx=0.918, rely=0.934)
+
+        self.mutaxasisOyna.mainloop()
+
+    def MaqsadUholda(self,y):
+        att = self.comattUholda.get()
+        qiymat = self.comqiymatUholda.get()
+        if len(att) != 0 and len(qiymat) != 0:
+            self.listbox_matn.insert(END, 'bo\'lsa, U holda {att} = {qiymat}'.format(att=att, qiymat=qiymat))
+        else:
+            messagebox.showinfo('Xatolik','ATTRIBUT va uning QIYMATI ni kiriting')
+    def Tasdiqlash(self):
+        att = self.comatt1.get()
+        qiymat = self.comqiymat1.get()
+        if len(att) != 0 and len(qiymat) != 0:
+            if len(self.listbox_matn.get(0,END)) == 0:
+                self.listbox_matn.insert(END, 'AGAR {att} = {qiymat}'.format(att=att,qiymat=qiymat))
+            else:
+                self.listbox_matn.insert(END, 'va {att} = {qiymat}'.format(att=att,qiymat=qiymat))
+            self.comatt1.delete(0,END)
+            self.comqiymat1.delete(0,END)
+            self.qiymatlarDict[att] = qiymat
+            self.comatt1.set('')
+            self.comqiymat1.set('')
+        else:
+            messagebox.showinfo('Xatolik','ATTRIBUT va uning QIYMATI ni kiriting')
+
+    def Saqlash(self):
+        att = self.attUholda.get()
+        qiymat = self.qiymatUholda.get()
+        if len(att) != 0 and len(qiymat) != 0:
+            try:
+                filename = 'kasallik.csv'
+                kslk = {'maqsad' : {att : qiymat},'qiymatlar' : self.qiymatlarDict}
+                ustunlar = ['maqsad','qiymatlar']
+                with open(filename, 'a', newline="") as fayl:
+                    writer = csv.DictWriter(fayl,fieldnames=ustunlar)
+                    writer.writeheader()
+                    writer.writerow(kslk)
+                fayl.close()
+                messagebox.showinfo('Habar','Qoida muvaffaqqiyatli saqlandi...')
+                self.qiymatlarDict = {}
+                qoida = self.listbox_matn.get(0,END)
+                self.listbox_matn.delete(0, END)
+                try:
+                    self.listbox_qoidalar.insert(END, 'P - :')
+                    for i in qoida:
+                        self.listbox_qoidalar.insert(END, i)
+                    with open('qoidalar.txt','a',newline="") as fyl:
+                        fyl.write('P ----------------------')
+                        for i in qoida:
+                            fyl.write(i+"\n")
+
+                except:
+                    messagebox.showerror('Xatolik', 'Yozilmadi...')
+                self.comattUholda.set('')
+                self.comqiymatUholda.set('')
+            except:
+                messagebox.showerror('Xatolik','Fayl topilmadi...')
+
+    def Orqaga(self):
+        if self.aktivmutaxasis:
+            self.mutaxasisOyna.destroy()
+            self.aktivmutaxasis = False
+        else:
+            self.foydalanuvchiOyna.destroy()
+            self.aktivfoydalanuvchi = False
+        self.TizimgaKirish()
+
+    def Chiqish(self):
+        if self.aktivmutaxasis:
+            self.mutaxasisOyna.destroy()
+        else:
+            self.foydalanuvchiOyna.destroy()
+
+    def NewWindow(self,natija):
+        self.yOynaAtts.append(natija)
+        top = Toplevel()
+        top.title('Yordamchi oyna')
+        top.geometry('600x120+400+300')
+        Label(top,font=('arial', 10, 'bold'),
+              text='Siz kiritgan ma\'lumotlar yetarli emas! Quyidagi attributning qiymatini ham kiriting!').grid(column=0,row=0,columnspan=3)
+        self.yOynacomfatt = ttk.Combobox(top, width=18, font=("Times New Roman", 14),
+                                     textvariable=self.yOynaAtt, state='readonly')
+        self.yOynacomfatt['values'] = self.yOynaAtts
+        self.yOynacomfatt.current(0)
+        self.yOynacomfatt.grid(row=1, column=0, pady=5)
+        Label(top,text=' = ',font=('arial', 16, 'bold')).grid(column=1,row=1,pady=5,padx=5)
+        self.yOynacomfqiymat = ttk.Combobox(top, width=18, font=("Times New Roman", 14),
+                                         textvariable=self.yOynaQiymat, state='readonly')
+        self.yOynacomfqiymat['values'] = self.fqiymatlar
+        self.yOynacomfqiymat.grid(row=1, column=2, pady=5)
+        Button(top,text='Ok',font=('arial', 16, 'bold'),bd=5,
+               command=lambda : self.Qushimcha(top)).grid(row=2,column=1,pady=5)
+        top.mainloop()
+
+    def Qushimcha(self,root):
+        att = self.yOynacomfatt.get()
+        qiymat = self.yOynacomfqiymat.get()
+        if len(att) != 0 and len(qiymat) != 0:
+            self.flistbox_matn.insert(END, '{att} = {qiymat}'.format(att=att, qiymat=qiymat))
+            self.fNatijaAttributlar.append(att)
+            self.fNatijaQiymatlar.append(qiymat)
+            root.destroy()
+        else:
+            messagebox.showinfo('Xatolik', 'ATTRIBUT va uning QIYMATI ni kiriting')
+
+
+try:
+    tizim = BoshTizim()
+except:
+    pass
